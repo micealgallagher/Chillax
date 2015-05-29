@@ -5,16 +5,12 @@ angular.module('ChillaxApp', [])
 
 	chillax.playSound = function () {
 		chillax.nextNotification="Is enabled: " + chillax.enabled;
+        console.log("Play misty for me");
+
 	};
 
 	chillax.saveSettings = function () {
-		chillax.nextNotification="Is enabled: " + chillax.enabled;
-		if ( chillax.nextNotification ) {
-			console.write("asdf");
-		} else {
-			expect(chillax.settings.isDisplayed()).toBeFalsy();
-		}
-		
+		console.log("Attempting to auto save the settings");
 	};
 
 });

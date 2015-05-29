@@ -29,7 +29,7 @@
 	  			</div>
 				<div class="small-6 large-6 columns">
 	  				<div class="switch">
-					  <input id="exampleCheckboxSwitch" type="checkbox" ng-model="chillax.enabled" ng-change="saveSettings()">
+					  <input id="exampleCheckboxSwitch" type="checkbox" ng-model="chillax.enabled" ng-change="chillax.saveSettings()">
 					  <label for="exampleCheckboxSwitch"></label>
 					</div> 
 	  			</div>
@@ -41,12 +41,12 @@
 				  <div class="row">
 				    <div class="large-6 columns">
 				      <label>Reminder Interval
-				        <input type="number" min="1" max="999" required placeholder="Duration in minutes" ng-model="chillax.intervalDuration" ngChange="chillax.saveSettings()"/>
+				        <input type="number" min="1" max="999" required placeholder="Duration in minutes" ng-model="chillax.intervalDuration" ng-change="chillax.saveSettings()"/>
 				      </label>
 				    </div>
 				    <div class="large-6 columns">
 				      <label>Break Interval
-				        <input type="number" min="1" max="999" required placeholder="Duration in minutes" ng-model="chillax.breakInterval" ngChange="chillax.saveSettings()"/>
+				        <input type="number" min="1" max="999" required placeholder="Duration in minutes" ng-model="chillax.breakInterval" ng-change="chillax.saveSettings()"/>
 				      </label>
 				    </div>
 				   
@@ -57,7 +57,7 @@
 				      <div class="row collapse">
 				        <div class="small-10 columns">
 				         <label>Play Sound
-					        <select ng-model="chillax" ng-change="saveSettings()">
+					        <select ng-model="chillax.sound"  ng-change="chillax.saveSettings()">
 					          <option select value="NON">No sound</option>
 					          <option value="DINGDONG">Ding Dong</option>
 					          <option value="CHURCH">Church</option>
