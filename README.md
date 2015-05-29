@@ -1,6 +1,6 @@
 # Chillax
 ## Description
-Chillax is a free Chrome OS application that *is currently in development*. Chillax prompts you at a specified interval to take a break.
+Chillax is a free Chrome OS application that **is currently in development**. Chillax prompts you at a specified interval to take a break.
 
 ## Features to come:
 + Specify the reminder interval
