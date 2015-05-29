@@ -1,0 +1,12 @@
+{
+  "name": "Chillax",
+  "description": "Chillax reminds you not to work so hard by prompting you to take regular breaks at an interval that you specify.",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["./foundation/js/vendor/modernizr.js", "./background.js"]
+    }
+  },
+  "icons": { "16": "chillax-16.png", "128": "chillax-128.png" }
+}
