@@ -21,8 +21,7 @@ angular.module('ChillaxApp', [])
             
             console.log("Settings loaded: " + obj["enabled"]);
             
-            
-            chillax.reminderInterval = obj["reminderInterval"];
+            this.chillax.reminderInterval = obj["reminderInterval"];
             chillax.breakInterval = settings["breakInterval"];
             chillax.sound = settings["sound"];
         });
