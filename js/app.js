@@ -2,37 +2,42 @@ angular.module('ChillaxApp', [])
 	.controller("ChillaxController", function () {
 	
 	var chillax = this;
-        
-    chillax.init = function() {
-        chillax.nextNotification="Chillax loaded!";
-        chillax.retrieveSettings();
-    };
-
-    chillax.retrieveSettings = function() {
-        var settings = {};
-        settings["enabled"] = "";
+    var settings = {};
+            settings["enabled"] = "";
         settings["reminderInterval"] = "";
         settings["breakInterval"] = "";
         settings["sound"] = "";
+    var reminderInterval;
         
-        chillax.reminderInterval = settings["reminderInterval"];
+    chillax.init = function() {
+        chillax.nextNotification="Chillax loaded!";
+        chillax.retrieveSettings(chillax.setSettings);
+    };
 
-        chillax.enabled = true;
-        
+    chillax.setSettings = function() {
+        console.log("Setting the setting: " + this.reminderInterval);
+        chillax.reminderInterval = this.reminderInterval;
+    };
+
+    chillax.retrieveSettings = function(callback) {
+
+
+                
         chrome.storage.sync.get(settings, function(obj) {
             
             console.log("Settings loaded: " + obj["reminderInterval"]);
-            settings["reminderInterval"] = obj["reminderInterval"];
 
-            chillax.reminderInterval = settings["reminderInterval"];
-        });
+            this.reminderInterval = obj["reminderInterval"];
+
+            callback && callback();
+        }.bind(this));
 
     };
 
 
     
 	chillax.playSound = function () {
-		chillax.nextNotification="Is enabled: " + chillax.enabled;
+		chillax.nextNotification="Is enabled: " + true;
         console.log("Play misty for me");
 
 	};
