@@ -21,9 +21,9 @@ angular.module('ChillaxApp', [])
     $scope.retrieveSettings = function() {
 
         $scope.obj ={};
-        
+
         $scope.$watchCollection('obj', function(newValue, oldValue) {
-            console.log("Watch value has changed: " + newValue);
+            console.log("Watch value has changed: " + newValue );
         });
 
         chrome.storage.sync.get(settings, function(obj) {
