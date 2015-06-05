@@ -23,14 +23,16 @@ angular.module('ChillaxApp', [])
         $scope.obj ={};
 
         $scope.$watchCollection('obj', function(newValue, oldValue) {
-            console.log("Watch value has changed: " + newValue );
+            console.log(newValue );
         });
 
-        chrome.storage.sync.get(settings, function(obj) {
+            console.log("about to load" );
+
+chrome.storage.sync.get(settings, function(obj) {
             console.log("Settings loaded: " + obj["reminderInterval"]);
-            $scope.$digest();
-
+            $scope.obj = obj;
         });
+        
 
     };
 
