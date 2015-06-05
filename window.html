@@ -10,7 +10,7 @@
     
 </head>
 
-<body ng-controller="ChillaxController as chillax" data-ng-init="chillax.init()">
+<body ng-controller="ChillaxController as chillax" data-ng-init="init()">
     <div id="wrap">
         <div id="main">
             <div class="row">
@@ -33,7 +33,7 @@
 
                         <div class="small-6 large-6 columns">
                             <div class="switch">
-                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="chillax.enabled">
+                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="enabled">
                                 <label for="exampleCheckboxSwitch"></label>
                             </div>
                         </div>
@@ -47,10 +47,10 @@
                             <!-- Begin - interval duration inputs --> 
                             <div class="row">
                                 <div class="large-6 small-6 columns">
-                                    <label>Reminder Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="chillax.reminderInterval" ng-change="chillax.saveSettings()"></label>
+                                    <label>Reminder Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="reminderInterval" ng-change="saveSettings()"></label>
                                 </div>
                                 <div class="large-6 small-6 columns">
-                                    <label>Break Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="chillax.breakInterval" ng-change="chillax.saveSettings()"></label>
+                                    <label>Break Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="breakInterval" ng-change="saveSettings()"></label>
                                 </div>
                             </div>
                             <!-- End - interval duration inputs -->
@@ -61,7 +61,7 @@
                                     <div class="row collapse">
                                         <div class="small-10 columns">
                                             <label>Play Sound 
-                                                <select ng-model="chillax.sound" ng-change="chillax.saveSettings()">
+                                                <select ng-model="sound" ng-change="saveSettings()">
                                                     <option value="NON">No sound</option>
                                                     <option value="DINGDONG">Ding Dong</option>
                                                     <option value="CHURCH">Church</option>
@@ -71,7 +71,7 @@
                                         </div>
 
                                         <div class="small-2 columns">
-                                            <label>&nbsp; <a class="button postfix fa fa-play-circle fa-4 text-left" href="#" style="font-style: italic; padding: 0px" ng-click="chillax.playSound()"></a></label>
+                                            <label>&nbsp; <a class="button postfix fa fa-play-circle fa-4 text-left" href="#" style="font-style: italic; padding: 0px" ng-click="playSound()"></a></label>
                                         </div>
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@
     <div id="footer" style="background: #2a2a2a; color: #e7989d; text-align: center">
         <!-- Next reminder will be at: 12:46pm rgb(156, 188, 104) !-->
         <span><br>
-        {{chillax.nextNotification}}</span>
+        {{nextNotification}}</span>
     </div>
     <!-- End - Footer -->
 </body>

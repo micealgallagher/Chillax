@@ -1,56 +1,59 @@
 angular.module('ChillaxApp', [])
-	.controller("ChillaxController", function () {
+	.controller("ChillaxController", ['$scope', function ($scope) {
 	
-	var chillax = this;
     var settings = {};
-            settings["enabled"] = "";
-        settings["reminderInterval"] = "";
-        settings["breakInterval"] = "";
-        settings["sound"] = "";
+    settings["enabled"] = "";
+    settings["reminderInterval"] = "";
+    settings["breakInterval"] = "";
+    settings["sound"] = "";
+
+
+
     var reminderInterval;
         
-    chillax.init = function() {
-        chillax.nextNotification="Chillax loaded!";
-        chillax.retrieveSettings(chillax.setSettings);
+    $scope.init = function() {
+        $scope.nextNotification="Miceal Gallagher";
+        $scope.reminderInterval=90;
+
+        $scope.retrieveSettings();
     };
 
-    chillax.setSettings = function() {
-        console.log("Setting the setting: " + this.reminderInterval);
-        chillax.reminderInterval = this.reminderInterval;
-    };
+    $scope.retrieveSettings = function() {
 
-    chillax.retrieveSettings = function(callback) {
+        $scope.obj ={};
+        
+        $scope.$watchCollection('obj', function(newValue, oldValue) {
+            console.log("Watch value has changed: " + newValue);
+        });
 
-
-                
         chrome.storage.sync.get(settings, function(obj) {
-            
             console.log("Settings loaded: " + obj["reminderInterval"]);
+            $scope.$digest();
 
-            this.reminderInterval = obj["reminderInterval"];
-
-            callback && callback();
-        }.bind(this));
+        });
 
     };
 
-
+    $scope.setSettings = function() {
+        console.log("Setting the setting: " + this.reminderInterval);
+        $scope.reminderInterval = this.reminderInterval;
+    };
     
-	chillax.playSound = function () {
-		chillax.nextNotification="Is enabled: " + true;
+	$scope.playSound = function () {
+		$scope.nextNotification="Is enabled: " + true;
         console.log("Play misty for me");
 
 	};
 
-	chillax.saveSettings = function () {
+	$scope.saveSettings = function () {
 		console.log("Attempting to auto save the settings");
         
         // Prepare setting values to save
         var settings = {};
-        settings["enabled"] = chillax.enabled;
-        settings["reminderInterval"] = chillax.reminderInterval;
-        settings["breakInterval"] = chillax.breakInterval;
-        settings["sound"] = chillax.sound;
+        settings["enabled"] = $scope.enabled;
+        settings["reminderInterval"] = $scope.reminderInterval;
+        settings["breakInterval"] = $scope.breakInterval;
+        settings["sound"] = $scope.sound;
         
         // Output settings
         console.log(settings);
@@ -63,4 +66,4 @@ angular.module('ChillaxApp', [])
         
     
 
-});
+}]);
