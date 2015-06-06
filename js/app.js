@@ -1,20 +1,25 @@
 angular.module('ChillaxApp', [])
-    .controller('ChillaxController', ['$scope', 'settings', 'Sounds', 'NotificationSystem', 
-    function($scope, settings, Sounds, NotificationSystem) {
-        $scope.settings = settings;
-        $scope.sounds = Sounds;
-        $scope.ns = NotificationSystem;
-        // init function
+    .controller('ChillaxController', ['$scope', 'setting', 'sound', 'notification', 
+    function($scope, setting, sound, notification) {
+        
+        $scope.setting = setting;
+        $scope.sound = sound;
+        $scope.notification = notification;
+        
+        // Init function
         $scope.init = function() {
-            //need to load settings first
-            settings.onLoad(function(){
-                //any time we update settings in this contoller we want to save them.
-                $scope.$watchCollection('settings', function(newVal, oldVal){
-                    settings.save(); // save function available from service.
+            
+            // Need to load setting first
+            setting.onLoadComplete(function() {
+                
+                // Any time we update setting in this contoller we want to save them.
+                $scope.$watchCollection('setting', function(newVal, oldVal) {
+                    setting.save();
                 });
-                //start the timer if they already had it active last time.
-                if(settings.enabled){
-                    $scope.ns.startTimer();
+                
+                // Start the timer if they already had it active last time.
+                if ( setting.enabled ) {
+                    $scope.notification.startTimer();
                     $scope.$apply();
                 }
             });
@@ -22,54 +27,58 @@ angular.module('ChillaxApp', [])
         };
 
         $scope.playSound = function() {
-            Sounds.play(settings.sound);
+            sound.play(setting.sound);
         };
-    }]).factory('settings',  ['$rootScope', function($rootScope) {
-        var loadListners = [];
-        var settings;
-        // deafault settings.
-        settings = {
+
+    }]).factory('setting',  ['$rootScope', function($rootScope) {
+        
+        var loadCompleteListener;
+        var loadedSettings;
+        
+        // Default setting.
+        setting = {
             enabled : false,
-            reminderInterval : 90,
-            breakInterval : 10,
+            reminderInterval : 20,
+            breakInterval : 4,
             sound : 'Ding Dong'
         };
 
-        function loaded(){
-            for(var i = 0; i < loadListners.length; ++i){
-                loadListners[i]();
-            }
+        function loadComplete() {
+            loadCompleteListener();
         }
 
-        settings.onLoad = function(func){
-            loadListners.push(func);
+        setting.onLoadComplete = function(func) {
+            loadCompleteListener = func;
         }
 
-        //load settings
-        console.log('about to load');
+        chrome.storage.sync.get(setting, function(obj) {
 
-        chrome.storage.sync.get(settings, function(obj) {
-            console.log('Settings loaded: ' + obj['reminderInterval']);
-            angular.extend(settings, obj);
-            $rootScope.$apply(); // hate to apply but once on load isn't bad.
-            loaded();
+            console.log('Settings loaded: ' + obj);
+            angular.extend(setting, obj);
+            $rootScope.$apply(); // Hate to apply but once on load isn't bad.
+            loadComplete();
         });
-        //save whenever anything changes.
-        settings.save = function() {
-            console.log('Attempting to auto save the settings');
-            // create a new object without the save or onLoad function.
-            // we don't want to remove the functions from the settings object currently in use by the app.
-            var s = angular.extend({}, settings, {save: undefined, onLoad: undefined});
-            //save to storage
+
+        // Save whenever anything changes.
+        setting.save = function() {
+
+            console.log('Attempting to auto save the setting');
+
+            // Create a new object without the save or onLoadComplete function.
+            // We don't want to remove the functions from the setting object currently in use by the app.
+            var s = angular.extend({}, setting, {save: undefined, onLoad: undefined});
+
+            // Save to storage
             chrome.storage.sync.set(s, function() {
                 console.log('Settings have been stored successfully');
             });
-
         };
-        // return the settings object as the service
-        return settings;
-    }]).factory('Sounds', [ function(){
-        //This is the map from a user readable key to a url for that sound.
+
+        return setting;
+
+    }]).factory('sound', [ function() {
+        
+        // This is the map from a user readable key to a url for that sound.
         var srcMap = {
             'Ding Dong' : 'audio/dingdong.wav',
             'Cha Ching' : 'audio/cash-register.mp3',
@@ -78,81 +87,95 @@ angular.module('ChillaxApp', [])
             'IM Message' : 'audio/notification-chime.wav',
             'Whip' : 'audio/whip-crack-01.wav'
         };
-        // create the sounds object to return
-        var sounds = {};
-        // list of keys for sounds
-        sounds.list = Object.keys(srcMap);
-        //play is given a key from the list and plays audio.
-        sounds.play = function(key){
-            if(!key || !srcMap[key]){
+        
+        // Create the sounds object to return
+        var sound = {};
+        // List of keys for sounds
+        sound.list = Object.keys(srcMap);
+        
+        // Play is given a key from the list and plays audio.
+        sound.play = function(key) {
+            if ( !key || !srcMap[key] ) {
                 return alert('Must choose a valid sound');
             }
-            var a = new Audio();
-            a.src = srcMap[key];
-            a.play();
+
+            var audio = new Audio();
+            audio.src = srcMap[key];
+            audio.play();
         };
-        //return the sounds service
-        return sounds;
-    }]).factory('NotificationSystem', ['settings', 'Sounds', '$rootScope' ,function(settings, Sounds, $rootScope){
+
+        return sound;
+    }]).factory('notification', ['setting', 'sound', '$rootScope' ,function(setting, sound, $rootScope) {
+        
         var isRunning = false;
-        var notify = function(message){
-                console.log('Playing sound : ', settings.sound);
-            if(settings.sound){
-                Sounds.play(settings.sound);
+        
+        var notify = function(message) {
+                console.log('Playing sound : ', setting.sound);
+            if ( setting.sound ) {
+                sound.play(setting.sound);
             } 
             var notification = new Notification(message, {
                 icon : 'chillax-128.png'
             });
         }
+
         // Chain of timers
         var workTimer, chillTimer; // These are here to keep reference of the inteval objects 
-        function startWorkTimer(){
-            workTimer = setTimeout(completeWorkTimer, settings.reminderInterval * 60 * 1000);
-            ns.nextNotification = "Chilax at : " + moment().add(settings.reminderInterval, 'm').format('hh:mma');
+        function startWorkTimer() {
+            workTimer = setTimeout(completeWorkTimer, setting.reminderInterval * 60 * 1000);
+            notification.nextNotification = "Chilax at : " + moment().add(setting.reminderInterval, 'm').format('hh:mma');
         };
-        function completeWorkTimer(){
-            notify('Time to Chillax!', settings.sound);
+
+        function completeWorkTimer() {
+            notify('Time to Chillax!', setting.sound);
             startChillTimer();
         };
-        function startChillTimer(){
-            chillTimer = setTimeout(completeChillTimer, settings.breakInterval * 60 * 1000);
-            ns.nextNotification = "Back to work at : " + moment().add(settings.breakInterval, 'm').format('hh:mma');
+
+        function startChillTimer() {
+            chillTimer = setTimeout(completeChillTimer, setting.breakInterval * 60 * 1000);
+            notification.nextNotification = "Back to work at : " + moment().add(setting.breakInterval, 'm').format('hh:mma');
         };
-        function completeChillTimer(){
+
+        function completeChillTimer() {
             notify('Back to work', 'Whip');
             startWorkTimer();
         };
 
-        // notification service
-        var ns = {}; 
-        ns.nextNotification = "Miceal Gallagher"; //default
-        ns.startTimer = function(){
+        // Notification service
+        var notification = {}; 
+        notification.nextNotification = "Miceal Gallagher";
+
+        notification.startTimer = function() {
             console.log('starting timer');
-            if(isRunning){  return; }
+            if ( isRunning ) {  return; }
             startWorkTimer();
             isRunning = true;
         };
-        ns.clearTimer = function(){
+
+        notification.clearTimer = function() {
             console.log('clearing timers');
-            if(!isRunning){ return; }
+            if ( !isRunning ) { return; }
             //clear timeout on untruthy value is ok
             clearTimeout(workTimer);
             clearTimeout(chillTimer);
-            ns.nextNotification = "Miceal Gallagher";
+            notification.nextNotification = "Miceal Gallagher";
             isRunning = false;
         }
-        ns.reset = function(){
-            if(isRunning){
-                ns.clearTimer();
-                ns.stopTimer();
+
+        notification.reset = function() {
+            if ( isRunning ) {
+                notification.clearTimer();
+                notification.stopTimer();
             }
         }
-        ns.toggleTimer = function(){
-            if(isRunning){
-                ns.clearTimer();
+
+        notification.toggleTimer = function() {
+            if ( isRunning ) {
+                notification.clearTimer();
             } else{
-                ns.startTimer();
+                notification.startTimer();
             }
         }
-        return ns;
+
+        return notification;
     }]);

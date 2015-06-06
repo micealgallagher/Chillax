@@ -34,7 +34,7 @@
 
                         <div class="small-6 large-6 columns">
                             <div class="switch">
-                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="settings.enabled" ng-change="ns.toggleTimer()">
+                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="setting.enabled" ng-change="notificationSystem.toggleTimer()">
                                 <label for="exampleCheckboxSwitch"></label>
                             </div>
                         </div>
@@ -48,10 +48,10 @@
                             <!-- Begin - interval duration inputs --> 
                             <div class="row">
                                 <div class="large-6 small-6 columns">
-                                    <label>Reminder Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="settings.reminderInterval"></label>
+                                    <label>Reminder Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="setting.reminderInterval"></label>
                                 </div>
                                 <div class="large-6 small-6 columns">
-                                    <label>Break Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="settings.breakInterval"></label>
+                                    <label>Break Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="setting.breakInterval"></label>
                                 </div>
                             </div>
                             <!-- End - interval duration inputs -->
@@ -62,8 +62,8 @@
                                     <div class="row collapse">
                                         <div class="small-10 columns">
                                             <label>Play Sound 
-                                                <select ng-model="settings.sound">
-                                                    <option ng-repeat="sound in sounds.list" value="{{sound}}">{{sound}}</option> 
+                                                <select ng-model="setting.sound">
+                                                    <option ng-repeat="sound in sound.list" value="{{sound}}">{{sound}}</option> 
                                                 </select>
                                             </label>
                                         </div>
@@ -92,7 +92,7 @@
     <div id="footer" style="background: #2a2a2a; color: #e7989d; text-align: center">
         <!-- Next reminder will be at: 12:46pm rgb(156, 188, 104) !-->
         <span><br>
-        {{ns.nextNotification}}</span>
+        {{notification.nextNotification}}</span>
     </div>
     <!-- End - Footer -->
 </body>
