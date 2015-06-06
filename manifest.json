@@ -10,6 +10,7 @@
   },
   "icons": { "16": "chillax-16.png", "128": "chillax-128.png" },
   "permissions": [
-  "storage"
+    "storage",
+    "notifications"
   ]
 }
