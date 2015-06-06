@@ -174,7 +174,7 @@ angular.module('ChillaxApp', [])
                 var diff = ns.date.diff(moment(), 'seconds');
                 var sec = diff % 60;
                 var min = Math.floor(diff / 60);
-                ds += min + ':' + sec;
+                ds += min + ':' + ("0" + sec).slice(-2);;
             }
             element.text(ds);
         }
