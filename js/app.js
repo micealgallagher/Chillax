@@ -79,7 +79,7 @@ angular.module('ChillaxApp', [])
     }]).factory('sound', [ function() {
         
         // This is the map from a user readable key to a url for that sound.
-        var srcMap = {
+        var soundFileMap = {
             'Ding Dong' : 'audio/dingdong.wav',
             'Cha Ching' : 'audio/cash-register.mp3',
             'Church Bells' : 'audio/church-bells.wav',
@@ -91,16 +91,16 @@ angular.module('ChillaxApp', [])
         // Create the sounds object to return
         var sound = {};
         // List of keys for sounds
-        sound.list = Object.keys(srcMap);
+        sound.list = Object.keys(soundFileMap);
         
         // Play is given a key from the list and plays audio.
         sound.play = function(key) {
-            if ( !key || !srcMap[key] ) {
+            if ( !key || !soundFileMap[key] ) {
                 return alert('Must choose a valid sound');
             }
 
             var audio = new Audio();
-            audio.src = srcMap[key];
+            audio.src = soundFileMap[key];
             audio.play();
         };
 
