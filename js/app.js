@@ -8,29 +8,18 @@ angular.module('ChillaxApp', [])
         
         // Init function
         $scope.init = function() {
-            //need to load settings first
-            settings.onLoad(function(){
-                //any time we update settings in this contoller we want to save them.
-                $scope.$watchCollection('settings', function(newVal, oldVal){
-                    settings.save(); // save function available from service.
-                    //$scope.ns.reset();
+            //need to load setting first
+            setting.onLoadComplete(function(){
+                //any time we update setting in this contoller we want to save them.
+                $scope.$watchCollection('setting', function(newVal, oldVal){
+                    setting.save(); // save function available from service.
+                    //$scope.notification.reset();
                 });
                 //start the timer if they already had it active last time.
-                if(settings.enabled){
-                    $scope.ns.startTimer();
-            // Need to load setting first
-            setting.onLoadComplete(function() {
-                
-                // Any time we update setting in this contoller we want to save them.
-                $scope.$watchCollection('setting', function(newVal, oldVal) {
-                    setting.save();
-                });
-                
-                // Start the timer if they already had it active last time.
-                if ( setting.enabled ) {
-                    $scope.notification.startTimer();
+                if(setting.enabled){
+                    $scope.notification.startTimer(); 
                 }
-                $scope.$apply();
+                $scope.$apply();           
             });
 
         };
@@ -112,7 +101,7 @@ angular.module('ChillaxApp', [])
         };
 
         return sound;
-    }]).factory('notification', ['setting', 'sound', '$rootScope' ,function(setting, sound, $rootScope) {
+    }]).factory('notification', ['setting', 'sound', '$rootScope', '$timeout' ,function(setting, sound, $rootScope, $timeout) {
         
         var notify = function(message) {
                 console.log('Playing sound : ', setting.sound);
@@ -126,18 +115,18 @@ angular.module('ChillaxApp', [])
         // Chain of timers
         var workTimer, chillTimer; // These are here to keep reference of the inteval objects 
         function startWorkTimer(){
-            workTimer = $timeout(completeWorkTimer, settings.reminderInterval * 60 * 1000);
-            updateLabel("Chillax in ", ns.date = moment().add(settings.reminderInterval, 'm'));//.format('hh:mma'));
+            workTimer = $timeout(completeWorkTimer, setting.reminderInterval * 60 * 1000);
+            updateLabel("Chillax in ", notification.date = moment().add(setting.reminderInterval, 'm'));//.format('hh:mma'));
         }; 
 
         function completeWorkTimer(){
-            notify('Time to Chillax!', settings.sound);
+            notify('Time to Chillax!', setting.sound);
             startChillTimer();
         }; 
 
         function startChillTimer(){
-            chillTimer = $timeout(completeChillTimer, settings.breakInterval * 60 * 1000);
-            updateLabel('Back to work in ', moment().add(settings.breakInterval, 'm'));//.format('hh:mma'));
+            chillTimer = $timeout(completeChillTimer, setting.breakInterval * 60 * 1000);
+            updateLabel('Back to work in ', moment().add(setting.breakInterval, 'm'));//.format('hh:mma'));
         };
 
         function completeChillTimer(){
@@ -188,17 +177,16 @@ angular.module('ChillaxApp', [])
             }
         }
         return notification;
-    }]).directive('chillCountdown', ['$interval', 'NotificationSystem', function($interval, NotificationSystem) {
+    }]).directive('chillCountdown', ['$interval', 'notification', function($interval, notification) {
 
       function link(scope, element, attrs) {
         var date,
             timeoutId;
-        var ns = NotificationSystem;
 
         function updateTime() {
-            var ds = ns.label;
-            if(ns.date){
-                var diff = ns.date.diff(moment(), 'seconds');
+            var ds = notification.label;
+            if(notification.date){
+                var diff = notification.date.diff(moment(), 'seconds');
                 var sec = diff % 60;
                 var min = Math.floor(diff / 60);
                 ds += min + ':' + ("0" + sec).slice(-2);;
@@ -206,7 +194,7 @@ angular.module('ChillaxApp', [])
             element.text(ds);
         }
 
-        scope.$watch(ns.date, function(value) {
+        scope.$watch(notification.date, function(value) {
           date = value;
           updateTime();
         });
