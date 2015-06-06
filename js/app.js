@@ -11,12 +11,13 @@ angular.module('ChillaxApp', [])
                 //any time we update settings in this contoller we want to save them.
                 $scope.$watchCollection('settings', function(newVal, oldVal){
                     settings.save(); // save function available from service.
+                    //$scope.ns.reset();
                 });
                 //start the timer if they already had it active last time.
                 if(settings.enabled){
                     $scope.ns.startTimer();
-                    $scope.$apply();
                 }
+                $scope.$apply();
             });
 
         };
@@ -49,9 +50,8 @@ angular.module('ChillaxApp', [])
         console.log('about to load');
 
         chrome.storage.sync.get(settings, function(obj) {
-            console.log('Settings loaded: ' + obj['reminderInterval']);
+            console.log('Settings loaded: ' + obj.reminderInterval);
             angular.extend(settings, obj);
-            $rootScope.$apply(); // hate to apply but once on load isn't bad.
             loaded();
         });
         //save whenever anything changes.
@@ -93,39 +93,43 @@ angular.module('ChillaxApp', [])
         };
         //return the sounds service
         return sounds;
-    }]).factory('NotificationSystem', ['settings', 'Sounds', '$rootScope' ,function(settings, Sounds, $rootScope){
-        var isRunning = false;
-        var notify = function(message){
-                console.log('Playing sound : ', settings.sound);
+    }]).factory('NotificationSystem', ['settings', 'Sounds', '$rootScope', '$timeout' ,function(settings, Sounds, $rootScope, $timeout){
+        
+        var notify = function(message, sound){
             if(settings.sound){
-                Sounds.play(settings.sound);
+                Sounds.play(sound);
             } 
             var notification = new Notification(message, {
                 icon : 'chillax-128.png'
             });
-        }
+        };
         // Chain of timers
         var workTimer, chillTimer; // These are here to keep reference of the inteval objects 
         function startWorkTimer(){
-            workTimer = setTimeout(completeWorkTimer, settings.reminderInterval * 60 * 1000);
-            ns.nextNotification = "Chilax at : " + moment().add(settings.reminderInterval, 'm').format('hh:mma');
-        };
+            workTimer = $timeout(completeWorkTimer, settings.reminderInterval * 60 * 1000);
+            updateLabel("Chillax at : ", ns.date = moment().add(settings.reminderInterval, 'm').format('hh:mma'));
+        }
         function completeWorkTimer(){
             notify('Time to Chillax!', settings.sound);
             startChillTimer();
-        };
+        }
         function startChillTimer(){
-            chillTimer = setTimeout(completeChillTimer, settings.breakInterval * 60 * 1000);
-            ns.nextNotification = "Back to work at : " + moment().add(settings.breakInterval, 'm').format('hh:mma');
-        };
+            chillTimer = $timeout(completeChillTimer, settings.breakInterval * 60 * 1000);
+            updateLabel('Back to work at : ', moment().add(settings.breakInterval, 'm').format('hh:mma'));
+        }
         function completeChillTimer(){
             notify('Back to work', 'Whip');
             startWorkTimer();
-        };
+        }
+        var labelListeners = [];
+        function updateLabel(label, date){
+            ns.nextNotification = (label || 'Miceal Gallagher') + (date || '');
+        }
 
         // notification service
         var ns = {}; 
-        ns.nextNotification = "Miceal Gallagher"; //default
+        var isRunning = false;
+        updateLabel();
         ns.startTimer = function(){
             console.log('starting timer');
             if(isRunning){  return; }
@@ -136,15 +140,15 @@ angular.module('ChillaxApp', [])
             console.log('clearing timers');
             if(!isRunning){ return; }
             //clear timeout on untruthy value is ok
-            clearTimeout(workTimer);
-            clearTimeout(chillTimer);
-            ns.nextNotification = "Miceal Gallagher";
+            $timeout.cancel(workTimer);
+            $timeout.cancel(chillTimer);
             isRunning = false;
+            updateLabel();
         }
         ns.reset = function(){
             if(isRunning){
                 ns.clearTimer();
-                ns.stopTimer();
+                ns.startTimer();
             }
         }
         ns.toggleTimer = function(){
