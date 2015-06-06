@@ -5,6 +5,7 @@ angular.module('ChillaxApp', [])
         $scope.init = function() {
             $scope.nextNotification = "Miceal Gallagher";
             $scope.reminderInterval = 90;
+            //any time we update settings in this contoller we want to save them.
             $scope.$watchCollection('settings', function(newVal, oldVal){
                 settings.save(); // save the sttings any time it changes.
             });
@@ -15,8 +16,7 @@ angular.module('ChillaxApp', [])
             console.log("Play misty for me");
         };
 
-    }]).factory('settings',  function($rootScope) {
-        //setup $scope.settings and the settings alias
+    }]).factory('settings',  ['$rootScope', function($rootScope) {
         var settings;
         settings = {};
         // deafault empty settings be used when the app first starts.
@@ -46,4 +46,4 @@ angular.module('ChillaxApp', [])
         };
         // return the settings object as the service
         return settings;
-    });
+    }]);
