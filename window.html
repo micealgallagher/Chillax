@@ -33,7 +33,7 @@
 
                         <div class="small-6 large-6 columns">
                             <div class="switch">
-                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="enabled">
+                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="settings.enabled">
                                 <label for="exampleCheckboxSwitch"></label>
                             </div>
                         </div>
@@ -47,10 +47,10 @@
                             <!-- Begin - interval duration inputs --> 
                             <div class="row">
                                 <div class="large-6 small-6 columns">
-                                    <label>Reminder Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="reminderInterval" ng-change="saveSettings()"></label>
+                                    <label>Reminder Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="settings.reminderInterval"></label>
                                 </div>
                                 <div class="large-6 small-6 columns">
-                                    <label>Break Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="breakInterval" ng-change="saveSettings()"></label>
+                                    <label>Break Interval <input max="999" min="1" placeholder="Duration in minutes" required="" type="number" ng-model="settings.breakInterval"></label>
                                 </div>
                             </div>
                             <!-- End - interval duration inputs -->
@@ -61,7 +61,7 @@
                                     <div class="row collapse">
                                         <div class="small-10 columns">
                                             <label>Play Sound 
-                                                <select ng-model="sound" ng-change="saveSettings()">
+                                                <select ng-model="settings.sound">
                                                     <option value="NON">No sound</option>
                                                     <option value="DINGDONG">Ding Dong</option>
                                                     <option value="CHURCH">Church</option>

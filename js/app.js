@@ -1,71 +1,49 @@
 angular.module('ChillaxApp', [])
-	.controller("ChillaxController", ['$scope', function ($scope) {
-	
-    var settings = {};
-    settings["enabled"] = "";
-    settings["reminderInterval"] = "";
-    settings["breakInterval"] = "";
-    settings["sound"] = "";
+    .controller("ChillaxController", ['$scope', 'settings', function($scope, settings) {
+        $scope.settings = settings;
+        // init function
+        $scope.init = function() {
+            $scope.nextNotification = "Miceal Gallagher";
+            $scope.reminderInterval = 90;
+            $scope.$watchCollection('settings', function(newVal, oldVal){
+                settings.save(); // save the sttings any time it changes.
+            });
+        };
 
+        $scope.playSound = function() {
+            $scope.nextNotification = "Is enabled: " + true;
+            console.log("Play misty for me");
+        };
 
+    }]).factory('settings',  function($rootScope) {
+        //setup $scope.settings and the settings alias
+        var settings;
+        settings = {};
+        // deafault empty settings be used when the app first starts.
+        settings["enabled"] = "";
+        settings["reminderInterval"] = "";
+        settings["breakInterval"] = "";
+        settings["sound"] = "";
 
-    var reminderInterval;
-        
-    $scope.init = function() {
-        $scope.nextNotification="Miceal Gallagher";
-        $scope.reminderInterval=90;
+        //load settings
+        console.log("about to load");
 
-        $scope.retrieveSettings();
-    };
-
-    $scope.retrieveSettings = function() {
-
-        $scope.obj ={};
-
-        $scope.$watchCollection('obj', function(newValue, oldValue) {
-            console.log(newValue );
-        });
-
-            console.log("about to load" );
-
-chrome.storage.sync.get(settings, function(obj) {
+        chrome.storage.sync.get(settings, function(obj) {
             console.log("Settings loaded: " + obj["reminderInterval"]);
-            $scope.obj = obj;
+            angular.extend(settings, obj);
+            $rootScope.$apply(); // hate to apply but once on load isn't bad.
         });
-        
+        //save whenever anything changes.
+        settings.save = function() {
+            console.log("Attempting to auto save the settings");
+            // create a new object without the save function
+            var s = angular.extend({}, settings, {save: undefined});
+            //save to storage
+            chrome.storage.sync.set(s, function() {
+                console.log("Settings have been stored successfully");
+            });
 
-    };
-
-    $scope.setSettings = function() {
-        console.log("Setting the setting: " + this.reminderInterval);
-        $scope.reminderInterval = this.reminderInterval;
-    };
-    
-	$scope.playSound = function () {
-		$scope.nextNotification="Is enabled: " + true;
-        console.log("Play misty for me");
-
-	};
-
-	$scope.saveSettings = function () {
-		console.log("Attempting to auto save the settings");
-        
-        // Prepare setting values to save
-        var settings = {};
-        settings["enabled"] = $scope.enabled;
-        settings["reminderInterval"] = $scope.reminderInterval;
-        settings["breakInterval"] = $scope.breakInterval;
-        settings["sound"] = $scope.sound;
-        
-        // Output settings
-        console.log(settings);
-        
-        chrome.storage.sync.set(settings, function() {
-            console.log("Settings have been stored successfully");
-        });
-        
-	};
-        
-    
-
-}]);
+        };
+        // return the settings object as the service
+        return settings;
+    });
