@@ -107,7 +107,7 @@ angular.module('ChillaxApp', [])
         var workTimer, chillTimer; // These are here to keep reference of the inteval objects 
         function startWorkTimer(){
             workTimer = $timeout(completeWorkTimer, settings.reminderInterval * 60 * 1000);
-            updateLabel("Chillax at : ", ns.date = moment().add(settings.reminderInterval, 'm').format('hh:mma'));
+            updateLabel("Chillax in ", ns.date = moment().add(settings.reminderInterval, 'm'));//.format('hh:mma'));
         }
         function completeWorkTimer(){
             notify('Time to Chillax!', settings.sound);
@@ -115,7 +115,7 @@ angular.module('ChillaxApp', [])
         }
         function startChillTimer(){
             chillTimer = $timeout(completeChillTimer, settings.breakInterval * 60 * 1000);
-            updateLabel('Back to work at : ', moment().add(settings.breakInterval, 'm').format('hh:mma'));
+            updateLabel('Back to work in ', moment().add(settings.breakInterval, 'm'));//.format('hh:mma'));
         }
         function completeChillTimer(){
             notify('Back to work', 'Whip');
@@ -123,6 +123,8 @@ angular.module('ChillaxApp', [])
         }
         var labelListeners = [];
         function updateLabel(label, date){
+            ns.label = (label || 'Miceal Gallagher');
+            ns.date = date;
             ns.nextNotification = (label || 'Miceal Gallagher') + (date || '');
         }
 
@@ -159,4 +161,41 @@ angular.module('ChillaxApp', [])
             }
         }
         return ns;
-    }]);
+    }]).directive('chillCountdown', ['$interval', 'NotificationSystem', function($interval, NotificationSystem) {
+
+      function link(scope, element, attrs) {
+        var date,
+            timeoutId;
+        var ns = NotificationSystem;
+
+        function updateTime() {
+            var ds = ns.label;
+            if(ns.date){
+                var diff = ns.date.diff(moment(), 'seconds');
+                var sec = diff % 60;
+                var min = Math.floor(diff / 60);
+                ds += min + ':' + sec;
+            }
+            element.text(ds);
+        }
+
+        scope.$watch(ns.date, function(value) {
+          date = value;
+          updateTime();
+        });
+
+        element.on('$destroy', function() {
+          $interval.cancel(timeoutId);
+        });
+        // start the UI update process; save the timeoutId for canceling
+        timeoutId = $interval(function() {
+          updateTime(); // update DOM
+        }, 1000);
+      }
+
+      return {
+        scope: {},
+        restrict: 'E',
+        link: link
+      };
+}]);
