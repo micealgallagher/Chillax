@@ -12,6 +12,10 @@ Chillax is a free Chrome OS application that **is currently in development**. Ch
 + Foundation
 + FontAwesome
 + Sticky Footer
++ MomentJS
+
+## Audio
+All audio files from FreeSound.org (www.freesound.org)
 
 ## Contributions
 Help make this app better by making suggestions or commiting a change. Feel Free to fork.
