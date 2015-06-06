@@ -34,7 +34,7 @@
 
                         <div class="small-6 large-6 columns">
                             <div class="switch">
-                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="settings.enabled">
+                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="settings.enabled" ng-change="ns.toggleTimer()">
                                 <label for="exampleCheckboxSwitch"></label>
                             </div>
                         </div>
@@ -64,10 +64,6 @@
                                             <label>Play Sound 
                                                 <select ng-model="settings.sound">
                                                     <option ng-repeat="sound in sounds.list" value="{{sound}}">{{sound}}</option> 
-                                                    <!-- <option value="NON">No sound</option>
-                                                    <option value="DINGDONG">Ding Dong</option>
-                                                    <option value="CHURCH">Church</option>
-                                                    <option value="IMCHAT">IM Chat</option> -->
                                                 </select>
                                             </label>
                                         </div>
@@ -96,7 +92,7 @@
     <div id="footer" style="background: #2a2a2a; color: #e7989d; text-align: center">
         <!-- Next reminder will be at: 12:46pm rgb(156, 188, 104) !-->
         <span><br>
-        {{nextNotification}}</span>
+        {{ns.nextNotification}}</span>
     </div>
     <!-- End - Footer -->
 </body>
