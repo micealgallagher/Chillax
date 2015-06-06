@@ -32,7 +32,7 @@ angular.module('ChillaxApp', [])
 
     }]).factory('setting',  ['$rootScope', function($rootScope) {
         
-        var loadCompleteListener;
+        var onLoadCompleteCallback;
         var loadedSettings;
         
         // Default setting.
@@ -44,11 +44,11 @@ angular.module('ChillaxApp', [])
         };
 
         function loadComplete() {
-            loadCompleteListener();
+            onLoadCompleteCallback();
         }
 
         setting.onLoadComplete = function(func) {
-            loadCompleteListener = func;
+            onLoadCompleteCallback = func;
         }
 
         chrome.storage.sync.get(setting, function(obj) {
@@ -64,7 +64,7 @@ angular.module('ChillaxApp', [])
 
             console.log('Attempting to auto save the setting');
 
-            // Create a new object without the save or onLoadComplete function.
+            // Create a new object without the save or onLoad function.
             // We don't want to remove the functions from the setting object currently in use by the app.
             var s = angular.extend({}, setting, {save: undefined, onLoad: undefined});
 
