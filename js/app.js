@@ -8,20 +8,18 @@ angular.module('ChillaxApp', [])
         
         // Init function
         $scope.init = function() {
-            
-            // Need to load setting first
-            setting.onLoadComplete(function() {
-                
-                // Any time we update setting in this contoller we want to save them.
-                $scope.$watchCollection('setting', function(newVal, oldVal) {
-                    setting.save();
+            //need to load setting first
+            setting.onLoadComplete(function(){
+                //any time we update setting in this contoller we want to save them.
+                $scope.$watchCollection('setting', function(newVal, oldVal){
+                    setting.save(); // save function available from service.
+                    //$scope.notification.reset();
                 });
-                
-                // Start the timer if they already had it active last time.
-                if ( setting.enabled ) {
-                    $scope.notification.startTimer();
-                    $scope.$apply();
+                //start the timer if they already had it active last time.
+                if(setting.enabled){
+                    $scope.notification.startTimer(); 
                 }
+                $scope.$apply();           
             });
 
         };
@@ -52,10 +50,8 @@ angular.module('ChillaxApp', [])
         }
 
         chrome.storage.sync.get(setting, function(obj) {
-
             console.log('Settings loaded: ' + obj);
             angular.extend(setting, obj);
-            $rootScope.$apply(); // Hate to apply but once on load isn't bad.
             loadComplete();
         });
 
@@ -105,9 +101,7 @@ angular.module('ChillaxApp', [])
         };
 
         return sound;
-    }]).factory('notification', ['setting', 'sound', '$rootScope' ,function(setting, sound, $rootScope) {
-        
-        var isRunning = false;
+    }]).factory('notification', ['setting', 'sound', '$rootScope', '$timeout' ,function(setting, sound, $rootScope, $timeout) {
         
         var notify = function(message) {
                 console.log('Playing sound : ', setting.sound);
@@ -117,35 +111,41 @@ angular.module('ChillaxApp', [])
             var notification = new Notification(message, {
                 icon : 'chillax-128.png'
             });
-        }
-
+        };
         // Chain of timers
         var workTimer, chillTimer; // These are here to keep reference of the inteval objects 
-        function startWorkTimer() {
-            workTimer = setTimeout(completeWorkTimer, setting.reminderInterval * 60 * 1000);
-            notification.nextNotification = "Chilax at : " + moment().add(setting.reminderInterval, 'm').format('hh:mma');
-        };
+        function startWorkTimer(){
+            workTimer = $timeout(completeWorkTimer, setting.reminderInterval * 60 * 1000);
+            updateLabel("Chillax in ", notification.date = moment().add(setting.reminderInterval, 'm'));//.format('hh:mma'));
+        }; 
 
-        function completeWorkTimer() {
+        function completeWorkTimer(){
             notify('Time to Chillax!', setting.sound);
             startChillTimer();
+        }; 
+
+        function startChillTimer(){
+            chillTimer = $timeout(completeChillTimer, setting.breakInterval * 60 * 1000);
+            updateLabel('Back to work in ', moment().add(setting.breakInterval, 'm'));//.format('hh:mma'));
         };
 
-        function startChillTimer() {
-            chillTimer = setTimeout(completeChillTimer, setting.breakInterval * 60 * 1000);
-            notification.nextNotification = "Back to work at : " + moment().add(setting.breakInterval, 'm').format('hh:mma');
-        };
-
-        function completeChillTimer() {
+        function completeChillTimer(){
             notify('Back to work', 'Whip');
             startWorkTimer();
         };
 
-        // Notification service
-        var notification = {}; 
-        notification.nextNotification = "Miceal Gallagher";
+        var labelListeners = [];
+        function updateLabel(label, date){
+            notification.label = (label || 'Miceal Gallagher');
+            notification.date = date;
+            notification.nextNotification = (label || 'Miceal Gallagher') + (date || '');
+        };
 
-        notification.startTimer = function() {
+        // notification service
+        var notification = {}; 
+        var isRunning = false;
+        updateLabel();
+        notification.startTimer = function(){
             console.log('starting timer');
             if ( isRunning ) {  return; }
             startWorkTimer();
@@ -156,10 +156,10 @@ angular.module('ChillaxApp', [])
             console.log('clearing timers');
             if ( !isRunning ) { return; }
             //clear timeout on untruthy value is ok
-            clearTimeout(workTimer);
-            clearTimeout(chillTimer);
-            notification.nextNotification = "Miceal Gallagher";
+            $timeout.cancel(workTimer);
+            $timeout.cancel(chillTimer);
             isRunning = false;
+            updateLabel();
         }
 
         notification.reset = function() {
@@ -176,6 +176,41 @@ angular.module('ChillaxApp', [])
                 notification.startTimer();
             }
         }
-
         return notification;
-    }]);
+    }]).directive('chillCountdown', ['$interval', 'notification', function($interval, notification) {
+
+      function link(scope, element, attrs) {
+        var date,
+            timeoutId;
+
+        function updateTime() {
+            var ds = notification.label;
+            if(notification.date){
+                var diff = notification.date.diff(moment(), 'seconds');
+                var sec = diff % 60;
+                var min = Math.floor(diff / 60);
+                ds += min + ':' + ("0" + sec).slice(-2);;
+            }
+            element.text(ds);
+        }
+
+        scope.$watch(notification.date, function(value) {
+          date = value;
+          updateTime();
+        });
+
+        element.on('$destroy', function() {
+          $interval.cancel(timeoutId);
+        });
+        // start the UI update process; save the timeoutId for canceling
+        timeoutId = $interval(function() {
+          updateTime(); // update DOM
+        }, 1000);
+      }
+
+      return {
+        scope: {},
+        restrict: 'E',
+        link: link
+      };
+}]);

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" ng-app="ChillaxApp">
+<html lang="en" ng-app="ChillaxApp" class="ng-cloak">
 <head>
     <link href="./foundation/css/foundation.css" rel="stylesheet">
     <link href="./font-awesome-4.3.0/css/font-awesome.css" rel="stylesheet">
@@ -69,7 +69,10 @@
                                         </div>
 
                                         <div class="small-2 columns">
-                                            <label>&nbsp; <a class="button postfix fa fa-play-circle fa-4 text-left" href="#" style="font-style: italic; padding: 0px" ng-click="playSound()"></a></label>
+                                            <label>&nbsp;</label>
+                                            <a class="button postfix text-left" href="#" style="font-size: 24px; padding: 0px" ng-click="playSound()">
+                                                <i class="fa fa-play-circle fa-48" style="width:100%; text-align: center;"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -91,8 +94,8 @@
     <!-- Begin - Footer -->
     <div id="footer" style="background: #2a2a2a; color: #e7989d; text-align: center">
         <!-- Next reminder will be at: 12:46pm rgb(156, 188, 104) !-->
-        <span><br>
-        {{notification.nextNotification}}</span>
+        <br>
+        <chill-countdown></chill-countdown>
     </div>
     <!-- End - Footer -->
 </body>
