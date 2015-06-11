@@ -11,7 +11,45 @@
     
 </head>
 
+    <style>
+        .frame {
+    -webkit-app-region: drag;
+    height: 20px;
+    position: fixed;
+    position: absolute;
+    width: 100%;
+    background-color: #2f2f2f;
+    font-family: Webdings;
+    text-align: right;
+    font-size: 12px;
+    cursor: move;
+}
+
+    .frame a {
+
+        -webkit-app-region: no-drag;
+        color: #9f9f9f;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        height: 100%;
+        width: 28px;
+    }
+
+        .frame a:hover {
+
+            color: gray;
+            background-color: #3e3e3e;
+        }
+    </style>
+    
 <body ng-controller="ChillaxController as chillax" data-ng-init="init()">
+    
+          <div class="frame">
+            <a href="#" ng-click="minimize();" id="window-minimize" title="Minimize"><i class="fa fa-minus-circle fa-2x"></i></a>
+            <a href="#" ng-click="close();" id="window-close" title="Close"><i class="fa fa-times-circle fa-2x"></i></a>
+          </div>
+    
     <div id="wrap">
         <div id="main">
             <div class="row">
