@@ -161,6 +161,8 @@ angular.module('ChillaxApp', [])
     }]).factory('notification', ['setting', 'sound', '$rootScope' ,function(setting, sound, $rootScope) {
         
         var isRunning = false;
+        var nextNotificationColor = "#e7989d";
+        var nextNotificationStyle = "blue";
         
         var notify = function(message) {
                 console.log('Playing sound : ', setting.sound);
@@ -196,7 +198,7 @@ angular.module('ChillaxApp', [])
 
         // Notification service
         var notification = {}; 
-        notification.nextNotification = "Miceal Gallagher";
+        notification.nextNotification = "Chillax disabled";
 
         notification.startTimer = function() {
             console.log('starting timer');
@@ -211,7 +213,7 @@ angular.module('ChillaxApp', [])
             //clear timeout on untruthy value is ok
             clearTimeout(workTimer);
             clearTimeout(chillTimer);
-            notification.nextNotification = "Miceal Gallagher";
+            notification.nextNotification = "Chillax disabled";
             isRunning = false;
         }
 

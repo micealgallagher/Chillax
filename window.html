@@ -17,9 +17,12 @@
     
 <body ng-controller="ChillaxController as chillax" data-ng-init="init()">
     
-          <div class="frame">
-            <a href="#" ng-click="minimize();" id="window-minimize" title="Minimize"><i class="fa fa-minus-circle fa-2x"></i></a>
-            <a href="#" ng-click="close();" id="window-close" title="Close"><i class="fa fa-times-circle fa-2x"></i></a>
+          <div class="frame" style="color:white">
+            <div class="frameTitle">Chillax</div>
+            <div style="float:right">
+                <a href="#" ng-click="minimize();" id="window-minimize" title="Minimize"><i class="fa fa-minus-circle fa-2x"></i></a>
+                <a href="#" ng-click="close();" id="window-close" title="Close"><i class="fa fa-times-circle fa-2x"></i></a>
+            </div>
           </div>
     
     <div id="wrap">
@@ -28,7 +31,7 @@
                 &nbsp; <!-- Topmost row  for padding only -->
             </div>
 
-            <div class="row">
+            <div class="row" style="margin-top: 10px">
                 <div class="small-1 large-4 columns">
                     &nbsp;<!-- Padding column left -->
                 </div>
@@ -44,7 +47,7 @@
 
                         <div class="small-6 large-6 columns">
                             <div class="switch">
-                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="setting.enabled" ng-change="notificationSystem.toggleTimer()">
+                                <input id="exampleCheckboxSwitch" type="checkbox" ng-model="setting.enabled" ng-change="notification.toggleTimer()">
                                 <label for="exampleCheckboxSwitch"></label>
                             </div>
                         </div>
@@ -103,7 +106,7 @@
     <!-- Begin - Footer -->
     <div id="footer" style="background: #2a2a2a; color: #e7989d; text-align: center">
         <!-- Next reminder will be at: 12:46pm rgb(156, 188, 104) !-->
-        <span><br>
+        <span ng-style="{ 'color' : notificiation.nextNotificationStyle}"><br>
         {{notification.nextNotification}}</span>
     </div>
     <!-- End - Footer -->

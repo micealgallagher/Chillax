@@ -1,14 +1,15 @@
 .frame {
-    -webkit-app-region: drag;
-    height: 20px;
-    position: fixed;
-    position: absolute;
-    width: 100%;
-    background-color: #2f2f2f;
-    font-family: Webdings;
-    text-align: right;
-    font-size: 12px;
-    cursor: move;
+  -webkit-app-region: drag;
+  height: 30px;
+  position: fixed;
+  position: absolute;
+  width: 100%;
+  background-color: #2f2f2f;
+  font-family: Webdings;
+  text-align: right;
+  font-size: 12px;
+  cursor: move;
+  padding-top: 2px;
 }
 
 .frame a {
@@ -24,4 +25,13 @@
 .frame a:hover {
     color: gray;
     background-color: #3e3e3e;
+}
+
+.frameTitle {
+  float: left;
+  padding-left: 45%;
+  padding-top: 3px;
+  font-size: 13px;
+  font-weight: bolder;
+  text-transform: capitalize;
 }

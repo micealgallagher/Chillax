@@ -6,8 +6,9 @@ chrome.app.runtime.onLaunched.addListener(function() {
       "height": 310
     },
   });
-    chrome.app.window.onClosed.addListener(function() {
-        console.log('Closing...boss');
-    });
+
+  chrome.app.window.onClosed.addListener(function() {
+      console.log('Closing...boss');
+  });
 
 });
